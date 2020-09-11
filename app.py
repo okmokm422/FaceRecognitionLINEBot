@@ -1,6 +1,7 @@
 # coding: utf-8
 
-import os # 機微情報に関しては環境変数で管理
+# 機密情報に関しては環境変数で管理
+import os 
 
 from flask import Flask, request, abort
 
@@ -10,8 +11,10 @@ from linebot import (
 from linebot.exceptions import (
     InvalidSignatureError
 )
+
+# textとimageを扱えるようにする
 from linebot.models import (
-    MessageEvent, TextMessage, TextSendMessage,
+    MessageEvent, TextMessage, TextSendMessage, ImageMessage # 追記
 )
 
 app = Flask(__name__)
@@ -53,6 +56,15 @@ def handle_message(event):
     line_bot_api.reply_message(
         event.reply_token,
         TextSendMessage(text=event.message.text))
+
+# 画像メッセージのときの挙動
+@handler.add(MessageEvent, message=ImageMessage)
+def handle_image(event):
+    # LINEチャネルを通じてメッセージを応答
+    line_bot_api.reply_message(
+        event.reply_token, 
+        TextSendMessage(text='画像です')
+    )
 
 # app.pyがメインスコープとして呼ばれた際には、appを起動
 if __name__ == "__main__":
