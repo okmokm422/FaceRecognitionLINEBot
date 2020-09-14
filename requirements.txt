@@ -1,3 +1,5 @@
 # インストールしたいパッケージを記載
 line-bot-sdk
 flask
+azure-cognitiveservices-vision-face
+msrestazure
