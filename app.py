@@ -75,27 +75,27 @@ def handle_message(event):
 # 画像メッセージのときの挙動
 @handler.add(MessageEvent, message=ImageMessage)
 def handle_image(event):
-    try:
-        # メッセージIDを受け取る
-        message_id = event.message.id
-        # メッセージIdに含まれるmassage_contentを抽出する
-        message_content = line_bot_api.get_message_content(message_id)
-        # contentの画像データをバイナリデータとして扱えるようにする
-        image = BytesIO(message_content.content)
-        # Detect from streamで顔検出
-        detected_faces = face_client.face.detect_with_stream(image)
-        print(detected_faces)
+  try:
+      # メッセージIDを受け取る
+      message_id = event.message.id
+      # メッセージIdに含まれるmassage_contentを抽出する
+      message_content = line_bot_api.get_message_content(message_id)
+      # contentの画像データをバイナリデータとして扱えるようにする
+      image = BytesIO(message_content.content)
+      # Detect from streamで顔検出
+      detected_faces = face_client.face.detect_with_stream(image)
+      print(detected_faces)
 
-        # 検出結果に応じて処理を分ける
-        if detected_faces != []:
-            # 検出された顔の最初のIDを取得
-            text = detected_faces[0].face_id
-        else:
-            # 検出されない場合のメッセージ
-            text = 'no faces detected'
-    except:
-        # エラー時のメッセージ
-        text = 'error'
+      # 検出結果に応じて処理を分ける
+      if detected_faces != []:
+          # 検出された顔の最初のIDを取得
+          text = detected_faces[0].face_id
+      else:
+          # 検出されない場合のメッセージ
+          text = 'no faces detected'
+  except:
+      # エラー時のメッセージ
+      text = 'error'
     
     # LINEチャネルを通じてメッセージを応答
     line_bot_api.reply_message(
