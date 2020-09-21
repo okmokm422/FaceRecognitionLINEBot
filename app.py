@@ -1,9 +1,11 @@
 # coding: utf-8
 
 # 機密情報に関しては環境変数で管理
+from flask.logging import create_logger
 import os
 
 from flask import Flask, request, abort
+from flask.logging import create_logger  # app.loggerのエラー防止
 
 from linebot import (
     LineBotApi, WebhookHandler
@@ -25,6 +27,7 @@ from azure.cognitiveservices.vision.face import FaceClient
 from msrest.authentication import CognitiveServicesCredentials
 
 app = Flask(__name__)
+log = create_logger(app)
 
 # 環境変数からトークンを読み込み
 # LINE
@@ -33,7 +36,7 @@ YOUR_CHANNEL_SECRET = os.getenv('YOUR_CHANNEL_SECRET')
 line_bot_api = LineBotApi(YOUR_CHANNEL_ACCESS_TOKEN)
 handler = WebhookHandler(YOUR_CHANNEL_SECRET)
 
-# LINE
+# FACE API
 YOUR_FACE_API_KEY = os.environ["YOUR_FACE_API_KEY"]
 YOUR_FACE_API_ENDPOINT = os.environ["YOUR_FACE_API_ENDPOINT"]
 face_client = FaceClient(
@@ -57,7 +60,7 @@ def callback():
     # リクエストのbodyを抽出
     # bodyにはチャネルに送信されてきたテキストメッセージ等が含まれている
     body = request.get_data(as_text=True)
-    app.logger.info("Request body: " + body)
+    log.info("Request body: " + body)
 
     # チャンネルに送信されてきたイベントに応じてBOTの挙動を定義
     # Signatureが正当なものであるか判定
@@ -79,8 +82,8 @@ def handle_message(event):
         event.reply_token,
         TextSendMessage(text=event.message.text))
 
-# 画像メッセージのときの挙動
 
+# 画像メッセージのときの挙動
 
 @handler.add(MessageEvent, message=ImageMessage)
 def handle_image(event):
