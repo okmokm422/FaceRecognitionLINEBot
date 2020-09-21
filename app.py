@@ -98,14 +98,14 @@ def handle_image(event):
         # 検出結果に応じて処理を分ける
         if detected_faces != []:
             # 顔検出ができたら顔認証を行う
-            valifired = face_client.face.verify_face_to_person(
+            valified = face_client.face.verify_face_to_person(
                 face_id=detected_faces[0].face_id,
                 person_group_id=PERSON_GROUP_ID,
                 person_id=PERSON_ID_AUDREY
             )
             # 認証結果に応じて処理を変える
-            if valifired:
-                if varifired.is_identical:
+            if valified:
+                if valified.is_identical:
                     # 顔認証が一致した場合
                     text = 'この写真はオードリーヘップバーンです(score:{:.3f}).format(varified.confidence)'
                 else:
