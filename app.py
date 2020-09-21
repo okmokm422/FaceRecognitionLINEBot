@@ -14,7 +14,7 @@ from linebot.exceptions import (
 
 # textとimageを扱えるようにする
 from linebot.models import (
-    MessageEvent, TextMessage, TextSendMessage, ImageMessage  # 追記
+    MessageEvent, TextMessage, TextSendMessage, ImageMessage
 )
 
 # バイナリデータとして画像を扱う
@@ -87,44 +87,29 @@ def handle_image(event):
     try:
         # メッセージIDを受け取る
         message_id = event.message.id
-        # メッセージIdに含まれるmassage_contentを抽出する
+        # メッセージIDに含まれるmessage_contentを抽出する
         message_content = line_bot_api.get_message_content(message_id)
         # contentの画像データをバイナリデータとして扱えるようにする
         image = BytesIO(message_content.content)
+
         # Detect from streamで顔検出
         detected_faces = face_client.face.detect_with_stream(image)
         print(detected_faces)
-
         # 検出結果に応じて処理を分ける
         if detected_faces != []:
-            # 顔検出ができたら顔認証を行う
-            valified = face_client.face.verify_face_to_person(
-                face_id=detected_faces[0].face_id,
-                person_group_id=PERSON_GROUP_ID,
-                person_id=PERSON_ID_AUDREY
-            )
-            # 認証結果に応じて処理を変える
-            if valified:
-                if valified.is_identical:
-                    # 顔認証が一致した場合
-                    text = 'この写真はオードリーヘップバーンです(score:{:.3f}).format(varified.confidence)'
-                else:
-                    # 顔認証が一致しなかった場合
-                    text = 'この写真はオードリーヘップバーンではありません(score:{:.3f}).format(varified.confidence)'
-            else:
-                text = '識別できませんでした。'
+            # 検出された顔の最初のIDを取得
+            text = detected_faces[0].face_id
         else:
-            # 顔検出されない場合のメッセージ
-            text = '写真から顔が検出できませんでした。他の画像で試してください。'
+            # 検出されない場合のメッセージ
+            text = "no faces detected"
     except:
         # エラー時のメッセージ
-        text = 'error'
-
-        # LINEチャネルを通じてメッセージを応答
-        line_bot_api.reply_message(
-            event.reply_token,
-            TextSendMessage(text=text)
-        )
+        text = "error"
+    # LINEチャネルを通じてメッセージを返答
+    line_bot_api.reply_message(
+        event.reply_token,
+        TextSendMessage(text=text)
+    )
 
 
 # app.pyがメインスコープとして呼ばれた際には、appを起動
