@@ -1,7 +1,7 @@
 # coding: utf-8
 
 # 機密情報に関しては環境変数で管理
-import os 
+import os
 
 from flask import Flask, request, abort
 
@@ -41,6 +41,9 @@ face_client = FaceClient(
     CognitiveServicesCredentials(YOUR_FACE_API_KEY)
     )
 
+# PERSON GROUP
+PERSON_GROUP_ID = os.getenv('PERSON_GROUP_ID')
+PERSON_ID_AUDREY = os.getenv('PERSON_ID_AUDREY')
 
 # 後述のwebhook通信をLINEチャネルから受け取るためのエンドポイントを設定
 @app.route("/callback", methods=['POST'])
@@ -88,18 +91,32 @@ def handle_image(event):
 
         # 検出結果に応じて処理を分ける
         if detected_faces != []:
-            # 検出された顔の最初のIDを取得
-            text = detected_faces[0].face_id
+            # 顔検出ができたら顔認証を行う
+            valifired = face_client.face.verify_face_to_person(
+                face_id=detected_faces[0].face_id,
+                person_group_id=PERSON_GROUP_ID,
+                person_id=PERSON_ID_AUDREY
+            )
+            # 認証結果に応じて処理を変える
+            if valifired:
+                if varifired.is_identical:
+                    # 顔認証が一致した場合
+                    text = 'この写真はオードリーヘップバーンです(score:{:.3f}).format(varified.confidence)'
+                else:
+                    # 顔認証が一致しなかった場合
+                    text = 'この写真はオードリーヘップバーンではありません(score:{:.3f}).format(varified.confidence)'
+            else:
+                text = '識別できませんでした。'
         else:
-            # 検出されない場合のメッセージ
-            text = 'no faces detected'
+            # 顔検出されない場合のメッセージ
+            text = '写真から顔が検出できませんでした。他の画像で試してください。'
     except:
         # エラー時のメッセージ
         text = 'error'
-        
+
         # LINEチャネルを通じてメッセージを応答
         line_bot_api.reply_message(
-            event.reply_token, 
+            event.reply_token,
             TextSendMessage(text=text)
         )
 
