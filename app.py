@@ -14,7 +14,7 @@ from linebot.exceptions import (
 
 # textとimageを扱えるようにする
 from linebot.models import (
-    MessageEvent, TextMessage, TextSendMessage, ImageMessage # 追記
+    MessageEvent, TextMessage, TextSendMessage, ImageMessage  # 追記
 )
 
 # バイナリデータとして画像を扱う
@@ -39,13 +39,15 @@ YOUR_FACE_API_ENDPOINT = os.environ["YOUR_FACE_API_ENDPOINT"]
 face_client = FaceClient(
     YOUR_FACE_API_ENDPOINT,
     CognitiveServicesCredentials(YOUR_FACE_API_KEY)
-    )
+)
 
 # PERSON GROUP
 PERSON_GROUP_ID = os.getenv('PERSON_GROUP_ID')
 PERSON_ID_AUDREY = os.getenv('PERSON_ID_AUDREY')
 
 # 後述のwebhook通信をLINEチャネルから受け取るためのエンドポイントを設定
+
+
 @app.route("/callback", methods=['POST'])
 def callback():
     # リクエスト元が正当なものであるのかを判断するためのヘッダー情報を抽出
@@ -68,6 +70,8 @@ def callback():
     return 'OK'
 
 # 「イベントがメッセージイベントであり」、かつ、「テキストメッセージ」である場合の挙動
+
+
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
     # reply先（reply_token）と送信する内容(massage.text)を設定
@@ -76,6 +80,8 @@ def handle_message(event):
         TextSendMessage(text=event.message.text))
 
 # 画像メッセージのときの挙動
+
+
 @handler.add(MessageEvent, message=ImageMessage)
 def handle_image(event):
     try:
@@ -119,6 +125,7 @@ def handle_image(event):
             event.reply_token,
             TextSendMessage(text=text)
         )
+
 
 # app.pyがメインスコープとして呼ばれた際には、appを起動
 if __name__ == "__main__":
