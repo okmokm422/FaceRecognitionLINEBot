@@ -46,7 +46,9 @@ face_client = FaceClient(
 
 # PERSON GROUP
 PERSON_GROUP_ID = os.getenv('PERSON_GROUP_ID')
-PERSON_ID_AUDREY = os.getenv('PERSON_ID_AUDREY')
+PERSON_ID_HANZAWA = os.getenv('PERSON_ID_HANZAWA')
+PERSON_ID_OWADA = os.getenv('PERSON_ID_OWADA')
+PERSON_ID_KUROSAKI = os.getenv('PERSON_ID_KUROSAKI')
 
 # 後述のwebhook通信をLINEチャネルから受け取るためのエンドポイントを設定
 
@@ -107,21 +109,38 @@ def handle_image(event):
             text = detected_faces[0].face_id
 
             # 顔検出ができたら顔認証を行う
-            valified = face_client.face.verify_face_to_person(
+            valified_hanzawa = face_client.face.verify_face_to_person(
                 face_id=detected_faces[0].face_id,
                 person_group_id=PERSON_GROUP_ID,
-                person_id=PERSON_ID_AUDREY
+                person_id=PERSON_ID_HANZAWA
             )
+            valified_owada = face_client.face.verify_face_to_person(
+                face_id=detected_faces[0].face_id,
+                person_group_id=PERSON_GROUP_ID,
+                person_id=PERSON_ID_OWADA
+            )
+            valified_kurosaki = face_client.face.verify_face_to_person(
+                face_id=detected_faces[0].face_id,
+                person_group_id=PERSON_GROUP_ID,
+                person_id=PERSON_ID_KUROSAKI
+            )
+
+            score_hanzawa = valified_hanzawa.confidence
+            score_owada = valified_owada.confidence
+            score_kurosaki = valified_kurosaki.confidence
+
             # 認証結果に応じて処理を変える
-            if valified:
-                if valified.is_identical:
-                    # 顔認証が一致した場合（スコアもつけて返す）
-                    text = 'この写真はオードリーヘップバーンです(score:{:.3f})'.format(
-                        valified.confidence)
+            # スコアに応じて結果を返す
+            if valified_hanzawa or valified_owada or valified_kurosaki:
+                if (score_hanzawa > score_owada) and (score_hanzawa > score_kurosaki):
+                    text = 'この写真は半沢直樹です(score : 'score_hanzawa')'
+
+                elif (score_owada > score_hanzawa) and (score_owada > score_kurosaki):
+                    text = 'この写真は大和田常務です(score : 'score_owada')'
+
                 else:
-                    # 顔認証が一致した場合（スコアもつけて返す）
-                    text = 'この写真はオードリーヘップバーンではありません(score:{:.3f})'.format(
-                        valified.confidence)
+                    text = 'この写真は黒崎検査官です(score :' score_kurosaki ')'
+
             else:
                 text = '識別できませんでした。'
 
