@@ -131,7 +131,9 @@ def handle_image(event):
 
             # 認証結果に応じて処理を変える
             # スコアに応じて結果を返す
-            if valified_hanzawa or valified_owada or valified_kurosaki:
+            if valified_hanzawa or valified_owada or valified_kurosaki \
+                    and (score_hanzawa > 0.6 and score_owada > 0.6 and score_kurosaki > 0.6):
+
                 if (score_hanzawa > score_owada) and (score_hanzawa > score_kurosaki):
                     text = 'この写真は半沢直樹です(score : {})'.format(score_hanzawa)
 
@@ -141,7 +143,7 @@ def handle_image(event):
                     text = 'この写真は黒崎検査官です(score : {})'.format(score_owada)
 
             else:
-                text = '識別できませんでした。'
+                text = '半沢直樹、大和田常務、黒崎検査官ではありません。'
 
         else:
             # 検出されない場合のメッセージ
