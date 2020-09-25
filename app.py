@@ -128,6 +128,7 @@ def handle_image(event):
             score_hanzawa = valified_hanzawa.confidence
             score_owada = valified_owada.confidence
             score_kurosaki = valified_kurosaki.confidence
+            score_mean = sum(score_hanzawa, score_owada, score_kurosaki) / 3
 
             # 認証結果に応じて処理を変える
             # スコアに応じて結果を返す
@@ -135,15 +136,16 @@ def handle_image(event):
                     and (score_hanzawa > 0.6 or score_owada > 0.6 or score_kurosaki > 0.6):
 
                 if (score_hanzawa > score_owada) and (score_hanzawa > score_kurosaki):
-                    text = 'この写真は半沢直樹です(score : {})'.format(score_hanzawa)
+                    text = 'この写真は半沢直樹です(半沢score : {})'.format(score_hanzawa)
 
                 elif (score_owada > score_hanzawa) and (score_owada > score_kurosaki):
-                    text = 'この写真は大和田常務です(score : {})'.format(score_owada)
+                    text = 'この写真は大和田常務です(大和田score : {})'.format(score_owada)
                 else:
-                    text = 'この写真は黒崎検査官です(score : {})'.format(score_kurosaki)
+                    text = 'この写真は黒崎検査官です(黒崎score : {})'.format(score_kurosaki)
 
             else:
-                text = '半沢直樹、大和田常務、黒崎検査官ではありません。'
+                text = '半沢直樹、大和田常務、黒崎検査官ではありません(平均score : {})'.format(
+                    score_mean)
 
         else:
             # 検出されない場合のメッセージ
