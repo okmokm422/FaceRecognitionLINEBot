@@ -128,7 +128,6 @@ def handle_image(event):
             score_hanzawa = valified_hanzawa.confidence
             score_owada = valified_owada.confidence
             score_kurosaki = valified_kurosaki.confidence
-            score_mean = sum(score_hanzawa, score_owada, score_kurosaki) / 3
 
             # 認証結果に応じて処理を変える
             # スコアに応じて結果を返す
