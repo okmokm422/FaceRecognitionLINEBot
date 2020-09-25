@@ -50,8 +50,8 @@ PERSON_ID_HANZAWA = os.getenv('PERSON_ID_HANZAWA')
 PERSON_ID_OWADA = os.getenv('PERSON_ID_OWADA')
 PERSON_ID_KUROSAKI = os.getenv('PERSON_ID_KUROSAKI')
 
-# 後述のwebhook通信をLINEチャネルから受け取るためのエンドポイントを設定
 
+# 後述のwebhook通信をLINEチャネルから受け取るためのエンドポイントを設定
 
 @app.route("/callback", methods=['POST'])
 def callback():
@@ -74,8 +74,8 @@ def callback():
 
     return 'OK'
 
-# 「イベントがメッセージイベントであり」、かつ、「テキストメッセージ」である場合の挙動
 
+# 「イベントがメッセージイベントであり」、かつ、「テキストメッセージ」である場合の挙動
 
 @handler.add(MessageEvent, message=TextMessage)
 def handle_message(event):
@@ -144,8 +144,7 @@ def handle_image(event):
                     text = 'この写真は黒崎検査官です(黒崎score : {})'.format(score_kurosaki)
 
             else:
-                text = '半沢直樹、大和田常務、黒崎検査官ではありません(平均score : {})'.format(
-                    score_mean)
+                text = '半沢直樹、大和田常務、黒崎検査官ではありません。'
 
         else:
             # 検出されない場合のメッセージ
