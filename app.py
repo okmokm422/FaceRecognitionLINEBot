@@ -138,17 +138,18 @@ def handle_image(event):
                     text = 'この写真は半沢直樹です(半沢score : {})'.format(score_hanzawa)
 
                 elif (score_owada > score_hanzawa) and (score_owada > score_kurosaki):
-                    text = 'この写真は大和田常務です(大和田score : {})'.format(score_owada)
+                    text = 'この写真は大和田取締役です(大和田score : {})'.format(score_owada)
                 else:
                     text = 'この写真は黒崎検査官です(黒崎score : {})'.format(score_kurosaki)
 
             else:
-                text = '半沢直樹、大和田常務、黒崎検査官ではありません。'
+                text = '半沢直樹、大和田取締役、黒崎検査官ではありません。'
 
         else:
             # 検出されない場合のメッセージ
             text = "no faces detected"
             text = "写真から顔が検出できませんでした。他の画像で試してください。"
+
     except:
         # エラー時のメッセージ
         text = "error"
